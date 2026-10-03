@@ -44,6 +44,8 @@
   /* ---- shared ---- */
   .btn { display: inline-flex; align-items: center; justify-content: center; height: 50px; padding: 0 30px; border-radius: 12px; background: var(--blue); color: #fff; font-weight: 700; font-size: 16px; line-height: 22.4px; letter-spacing: -.32px; border: 0; cursor: pointer; transition: background .15s, transform .15s; }
   .btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: #f0f0f3; }
   .pill { display: inline-flex; align-items: center; height: 38px; padding: 0 14px; border-radius: 100px; background: var(--blue); color: #fff; font-weight: 500; font-size: 16px; letter-spacing: -.32px; }
   h2.h2 { font-weight: 800; font-size: 46px; line-height: 50.6px; letter-spacing: -.92px; color: var(--ink); }
   .sub { color: var(--body); font-size: 18px; line-height: 25.2px; }
@@ -58,6 +60,8 @@
   .nav-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 30px; font-weight: 600; font-size: 16px; letter-spacing: -.32px; color: #000; white-space: nowrap; }
   .nav-links a { padding: 8px 0; border-bottom: 2px solid transparent; }
   .nav-links a:hover { border-color: var(--blue); }
+  .nav-links .only-mobile { display: none; }
+  [data-app][hidden] { display: none !important; }
   .nav .btn { height: 46px; padding: 0 24px; }
   .menu-btn { display: none; background: none; border: 0; padding: 10px; cursor: pointer; color: #000; }
   .menu-btn svg { width: 26px; height: 26px; }
@@ -66,7 +70,7 @@
   .hero { background: var(--bg); padding-top: 196px; text-align: center; overflow: hidden; display: flex; flex-direction: column; }
   .hero h1 { max-width: 960px; margin: 0 auto; text-transform: uppercase; color: #000; font-weight: 800; font-size: clamp(2rem, 4.45vw, 64px); line-height: 1; letter-spacing: -.02em; }
   .hero .sub { max-width: 540px; margin: 22px auto 0; }
-  .hero .btn { margin-top: 26px; align-self: center; }
+  .hero-ctas { margin-top: 26px; align-self: center; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .hero-img { position: relative; margin: 19px auto 0; width: clamp(300px, 40.8vw, 845px); }
   .hero-img img { width: 100%; height: auto; }
   .ticker { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; background: var(--blue); color: #fff; height: 48px; overflow: hidden; display: flex; align-items: center; }
@@ -225,6 +229,7 @@
     .nav-links.open { display: flex; }
     .nav-links a { padding: 12px; }
     .nav .btn { display: none; }
+    .nav-links .only-mobile { display: block; }
     .menu-btn { display: block; }
     h2.h2 { font-size: 34px; line-height: 40px; }
     .hero { padding-top: 140px; }
@@ -264,8 +269,9 @@
     <a href="#platform">Platform</a>
     <a href="#how">How It Works</a>
     <a href="#benefits">Benefits</a>
+    <a class="only-mobile" data-app href="#" hidden>Get started</a>
   </nav>
-  <a class="btn" href="#contact">Contact</a>
+  <a class="btn" id="navcta" href="#contact">Contact</a>
   <button class="menu-btn" id="menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
   </button>
@@ -278,7 +284,10 @@
     <h1>Earn your salary.<br>Pay your home directly.</h1>
     <p class="sub">Verified government employees find approved homes and pay rent by approving a prompt on their phone.</p>
   </div>
-  <a class="btn" href="#contact">Request a briefing</a>
+  <div class="hero-ctas">
+    <a class="btn" href="#contact">Request a briefing</a>
+    <a class="btn ghost" data-app href="#" hidden>Get started</a>
+  </div>
   <div class="hero-img"><img src="assets/hero-house.png" alt="A model house held on an open hand" width="1024" height="708"></div>
   <div class="ticker" aria-label="Key features">
     <div class="ticker-track">
@@ -470,6 +479,15 @@
 </footer>
 
 <script>
+  // "Get started" leads into the pilot app, which is served from the app/ folder of this same site.
+  // The app is built from lite/ with `npm run publish:landing`. If app/ is not present, set APP_URL to '' and rebuild
+  // and the "Get started" links stay hidden and the nav button stays "Contact".
+  const APP_URL = 'app/#/start';
+  if (APP_URL) {
+    document.querySelectorAll('[data-app]').forEach(a => { a.href = APP_URL; a.hidden = false; });
+    const navcta = document.getElementById('navcta'); navcta.href = APP_URL; navcta.textContent = 'Get started';
+  }
+
   // nav
   const btn = document.getElementById('menubtn'), links = document.getElementById('navlinks');
   btn.addEventListener('click', () => { const o = links.classList.toggle('open'); btn.setAttribute('aria-expanded', o); });
